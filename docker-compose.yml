@@ -1,12 +1,21 @@
 services:
-  tradingagents:
+  trading-app:
     build: .
+    user: "1000:1000"  # Run as host user to avoid permission issues with volumes
     env_file:
       - .env
     volumes:
-      - tradingagents_data:/home/appuser/.tradingagents
+      - ./data:/home/appuser/.tradingagents
+      - .:/home/appuser/app
+    entrypoint: ["bash", "start.sh"]
     tty: true
     stdin_open: true
+    ports:
+      - "5050:5050"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    restart: unless-stopped
 
   ollama:
     image: ollama/ollama:latest
